@@ -135,10 +135,10 @@ int main(int argc, char * argv[]){
 		printf("Author      : Siavash Katebzadeh\n");
 		printf("Version     : 1\n");
 		printf("Copyright   : GPL\n");
-		printf("Description : ShortestPath in MPI\n");
+		printf("Description : CentralizedShortestPath in MPI\n");
 		printf("=========================================================\n");
 		if (argc != 2) {
-			printf("Invalid input! Usage: mpirun -np p ShortestPath file\n");
+			printf("Invalid input! Usage: mpirun -np p Parallel file\n");
 		} else {
 			file = (argv[1]);
 
