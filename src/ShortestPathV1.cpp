@@ -89,3 +89,24 @@ void master(int size,char * file){
 		cout << endl;
 	}
 }
+
+void slave(int rank,int S){
+	int N;
+	MPI_Status status;
+
+	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+	int num = N;
+	int size = N * N;
+	int data[size];
+
+	MPI_Bcast (&data, size, MPI_INT, 0, MPI_COMM_WORLD);
+
+	int count = (int) ceil(num/S);
+	int start = rank * count;
+	if((num * start) + (num * count) > size) count = N - start;
+
+	floydsAlgorithm(rank,data,num,start,count);
+
+	MPI_Send(data,size,MPI_INT,0,0,MPI_COMM_WORLD);
+}
