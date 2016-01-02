@@ -41,3 +41,51 @@ void floydsAlgorithm(int rank, int *data, int N, int start, int count){
 		}
 	}
 }
+
+void master(int size,char * file){
+	MPI_Status status;
+
+	FILE *I_in;
+
+	ifstream M_in(file, ios::in);
+	int N,tmp,index;
+	M_in >> N;
+
+
+	int data[N*N];
+	for (int y = 0; y < N; y++)
+		for (int x = 0; x < N; x++){
+			   M_in >> tmp;
+			   data[y*N + x] = tmp;
+		}
+
+
+	MPI_Bcast (&N, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+	MPI_Bcast (data, N*N, MPI_INT, 0, MPI_COMM_WORLD);
+
+	int count = (int) ceil(N/size);
+	int start = N;
+	int total = N*N;
+
+	floydsAlgorithm(0,data,N,0,count);
+
+	int t[total];
+	for(int p=1;p<size;p++){
+		MPI_Recv(&t, total, MPI_INT, p, 0, MPI_COMM_WORLD,&status);
+		for(int v=0;v<total;v++){
+			data[v] = max(data[v],t[v]);
+		}
+	}
+
+	for(int i=0;i<N;i++){
+		for (int j=0;j<N;j++){
+			index = i*N+j;
+			if(data[index] == SMINF)
+				cout << 0 << ' ';
+			else
+				cout << data[index] << ' ';
+		}
+		cout << endl;
+	}
+}
