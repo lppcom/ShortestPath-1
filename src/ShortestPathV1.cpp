@@ -1,3 +1,12 @@
+/*
+ ============================================================================
+ Name        : ShortestPath.cpp
+ Author      : Siavash Katebzadeh
+ Version     : 1
+ Copyright   : GPL
+ Description : ShortestPath in MPI
+ ============================================================================
+ */
 #include <iostream>
 #include <fstream>
 #include <algorithm>
@@ -109,4 +118,41 @@ void slave(int rank,int S){
 	floydsAlgorithm(rank,data,num,start,count);
 
 	MPI_Send(data,size,MPI_INT,0,0,MPI_COMM_WORLD);
+}
+
+int main(int argc, char * argv[]){
+	int size, my_rank, len;
+	MPI_Init(&argc, &argv);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+	char * file;
+
+
+	if (my_rank == 0) {
+		printf("=========================================================\n");
+		printf("Name        : ShortestPath.cpp\n");
+		printf("Author      : Siavash Katebzadeh\n");
+		printf("Version     : 1\n");
+		printf("Copyright   : GPL\n");
+		printf("Description : ShortestPath in MPI\n");
+		printf("=========================================================\n");
+		if (argc != 2) {
+			printf("Invalid input! Usage: mpirun -np p ShortestPath file\n");
+		} else {
+			file = (argv[1]);
+
+		}
+	}
+
+	if (my_rank == 0)
+	{
+		set_clock();
+		master(size,file);
+		cout << "Time: "<< elapsed_time()<< endl;
+	}
+	else{
+		slave(my_rank,size);
+	}
+	MPI_Finalize();
 }
